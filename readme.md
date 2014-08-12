@@ -11,7 +11,8 @@ Your task for tonight is to write a __Puppy Scraper__. Your scraper will search 
 
 ### Bonus 
 1. Only return dog's who have an image in their description (hint: look for a span with the class of "p")
-2. Make sure your result does not include any rescue dogs (hint: search for the word rescue) or the words "item" or "boots"
+2. Make sure your result does not any links with the words "item" or "boots" 
+3. Make sure your result does not include any rescue dogs
 
 
 
