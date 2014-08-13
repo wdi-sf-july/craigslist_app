@@ -10,23 +10,51 @@ describe "scrapper" do
     @today = "Aug 12"
   end
 
-  describe "filter_links" do
-    it "should here is an example of using the befor each data" do
-      rows = @doc.css(".row")
-      rows.each do |row|
-        puts row.content
-      end
-      expect("your attention").to eql("this test to be erased or edited")
-    end
-
-    it "you can also use a string" do
-      # rowsString is contains one valid row
-      rowsString =  '<p class="row" data-pid="4581207234"> <a href="/sfc/pet/4581207234.html" class="i" data-id="0:00F0F_kUje2CUzekG"></a> <span class="txt"> <span class="star"></span> <span class="pl"> <span class="date">Aug 12</span>  <a href="/sfc/pet/4581207234.html" data-id="4581207234" class="hdrlnk">$25/night In Home Dog Sitter! Small Dog Retreat &#9829;</a> </span> <span class="l2">   <span class="pnr"> <small> (Bay Area)</small> <span class="px"> <span class="p"> pic&nbsp;<span class="maptag" data-pid="4581207234">map</span></span></span> </span>  </span> </span> </p>'
-      rows = Nokogiri::HTML(rowsString)
-      expect(filter_links(rows, @today).length).to eql(1)
-    end
-  end
-
   describe "get_todays_rows" do
+    it "should return an array" do
+      rows = get_todays_rows(@doc, @today)
+      expect(rows.instance_of?(Array)).to be(true)
+    end
+
+    it "should select row with a .row class today's date in .date" do
+      html = "<div><div class='row'><div class='date'>#{@today}</div></div></div>"
+      doc = Nokogiri::HTML(html)
+      rows = get_todays_rows(doc, @today)
+      expect(rows.length).to eql(1)
+    end
+
   end
+
+  describe "filter_links" do
+    it "should return an array" do
+      rows = @doc.css(".row")
+      links = filter_links(rows, /puppy|pup|dog/i)
+      expect(links.instance_of?(Array)).to be(true)
+    end
+    it "should return a match for a row with the word dog" do
+      # rowsString is contains one valid row
+      row_text = 'Dog!'
+      rowsString =  '<div><p class="row" data-pid="4581207234"> <a href="/sfc/pet/4581207234.html" class="i" data-id="0:00F0F_kUje2CUzekG"></a> <span class="txt"> <span class="star"></span> <span class="pl"> <span class="date">Aug 12</span>  <a href="/sfc/pet/4581207234.html" data-id="4581207234" class="hdrlnk">' + row_text + '</a> </span> <span class="l2">   <span class="pnr"> <small> (Bay Area)</small> <span class="px"> <span class="p"> pic&nbsp;<span class="maptag" data-pid="4581207234">map</span></span></span> </span>  </span> </span> </p></div>'
+      rows = Nokogiri::HTML(rowsString).css(".row")
+      expect(filter_links(rows, /puppy|pup|dog/i).length).to eql(1)
+    end
+
+    it "should return a match for a row with the word puppy" do
+      # rowsString is contains one valid row
+      row_text = 'Puppy!'
+      rowsString = '<div><p class="row" data-pid="4581207234"> <a href="/sfc/pet/4581207234.html" class="i" data-id="0:00F0F_kUje2CUzekG"></a> <span class="txt"> <span class="star"></span> <span class="pl"> <span class="date">Aug 12</span>  <a href="/sfc/pet/4581207234.html" data-id="4581207234" class="hdrlnk">' + row_text + '</a> </span> <span class="l2">   <span class="pnr"> <small> (Bay Area)</small> <span class="px"> <span class="p"> pic&nbsp;<span class="maptag" data-pid="4581207234">map</span></span></span> </span>  </span> </span> </p></div>'
+      rows = Nokogiri::HTML(rowsString).css(".row")
+      expect(filter_links(rows, /puppy|pup|dog/i).length).to eql(1)
+    end
+
+    it "should return a match for a row with the word pup" do
+      # rowsString is contains one valid row
+      row_text = 'Pup pup!'
+      rowsString = '<div><p class="row" data-pid="4581207234"> <a href="/sfc/pet/4581207234.html" class="i" data-id="0:00F0F_kUje2CUzekG"></a> <span class="txt"> <span class="star"></span> <span class="pl"> <span class="date">Aug 12</span>  <a href="/sfc/pet/4581207234.html" data-id="4581207234" class="hdrlnk">' + row_text + '</a> </span> <span class="l2">   <span class="pnr"> <small> (Bay Area)</small> <span class="px"> <span class="p"> pic&nbsp;<span class="maptag" data-pid="4581207234">map</span></span></span> </span>  </span> </span> </p></div>'
+      rows = Nokogiri::HTML(rowsString).css(".row")
+      expect(filter_links(rows, /puppy|pup|dog/i).length).to eql(1)
+    end
+
+  end
+
 end
